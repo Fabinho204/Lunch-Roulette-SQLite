@@ -57,6 +57,4 @@ $db->exec("INSERT INTO settings (setting_key, setting_value) VALUES ('admin_regi
 
 // Schließen der Datenbankverbindung
 $db->close();
-
-echo "SQLite-Datenbank und Tabellen erfolgreich erstellt.";
 ?>

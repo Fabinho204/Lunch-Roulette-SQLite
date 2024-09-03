@@ -21,10 +21,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signup'])) {
     $name = trim($_POST["name"]);
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
+    $confirm_password = $_POST["confirm_password"]; // Confirm password field
 
     // Überprüfen, ob irgendein Eingabefeld leer ist
-    if (empty($name) || empty($email) || empty($password)) {
+    if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
         $errors[] = "Alle Felder sind erforderlich.";
+    } elseif ($password !== $confirm_password) { // Check if passwords match
+        $errors[] = "Die Passwörter stimmen nicht überein.";
     } else {
         // E-Mail-Format validieren
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -103,6 +106,9 @@ $db->close();
                 <input type="password" name="password" class="form-control" placeholder="Password" required>
             </div>
             <div class="form-group">
+                <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+            </div>
+            <div class="form-group">
                 <button type="submit" name="signup" class="btn btn-signup">Sign Up</button>
             </div>
         </form>
@@ -118,8 +124,12 @@ $db->close();
             var name = document.forms["signupForm"]["name"].value;
             var email = document.forms["signupForm"]["email"].value;
             var password = document.forms["signupForm"]["password"].value;
-            if (name === "" || email === "" || password === "") {
+            var confirm_password = document.forms["signupForm"]["confirm_password"].value;
+            if (name === "" || email === "" || password === "" || confirm_password === "") {
                 alert("All fields are mandatory");
+                event.preventDefault();
+            } else if (password !== confirm_password) {
+                alert("Passwords do not match");
                 event.preventDefault();
             }
         });

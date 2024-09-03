@@ -30,16 +30,16 @@ $query = "
 $result = $db->query($query);
 
 $pdf->SetFont('Arial', '', 12);
-$pdf->Cell(60, 10, 'Person 1', 1);
-$pdf->Cell(60, 10, 'Person 2', 1);
-$pdf->Cell(60, 10, 'Person 3', 1);
+$pdf->Cell(60, 10, iconv('UTF-8', 'windows-1252', 'Person 1'), 1);
+$pdf->Cell(60, 10, iconv('UTF-8', 'windows-1252', 'Person 2'), 1);
+$pdf->Cell(60, 10, iconv('UTF-8', 'windows-1252', 'Person 3'), 1);
 $pdf->Ln();
 
 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-    $pdf->Cell(60, 10, $row['user1_name'], 1);
-    $pdf->Cell(60, 10, $row['user2_name'], 1);
+    $pdf->Cell(60, 10, iconv('UTF-8', 'windows-1252', $row['user1_name']), 1);
+    $pdf->Cell(60, 10, iconv('UTF-8', 'windows-1252', $row['user2_name']), 1);
     if (!empty($row['user3_name'])) {
-        $pdf->Cell(60, 10, $row['user3_name'], 1);
+        $pdf->Cell(60, 10, iconv('UTF-8', 'windows-1252', $row['user3_name']), 1);
     } else {
         $pdf->Cell(60, 10, '', 1);
     }

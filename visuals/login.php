@@ -25,9 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
         
         if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
             // Admin existiert, Passwort verifizieren
-
-            // password_verify($password, $row['password']) später den Hash verwenden für Sicherheit
-
             if ($row['isAdmin']) {
                 if (password_verify($password, $row['password'])) {
                     // Passwort ist korrekt, Admin einloggen
