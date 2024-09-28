@@ -19,98 +19,68 @@ SET time_zone = "+00:00";
 --
 -- Database: `siemens_lunch_roulette`
 --
-
--- --------------------------------------------------------
-
-CREATE TABLE `roulette_winners` (
-  `id` int(11) NOT NULL,
-  `user1` int(11) NOT NULL,
-  `user2` int(11) NOT NULL,
-  `user3` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
+-- ------------------------------------------------------- --
 
 --
--- Table structure for table `users`
+-- TABLE `roulette_winners`
 --
 
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `name` varchar(200) NOT NULL,
-  `participate_in_roulette` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-ALTER TABLE `users`
-ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `users`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
-
-CREATE TABLE `admins` (
-  `id` int(11) NOT NULL,
-  `name` varchar(200) NOT NULL,
-  `email` varchar(200) NOT NULL,
-  `password` varchar(300) NOT NULL,
-  `participate_in_roulette` int(11) NOT NULL,
-  `isAdmin` TINYINT(1) NOT NULL DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE IF NOT EXISTS `roulette_winners` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user1` INT(11) NOT NULL,
+    `user2` INT(11) NOT NULL,
+    `user3` INT(11) DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP (),
+	PRIMARY KEY (`id`)
+)  ENGINE=INNODB DEFAULT CHARSET=UTF8 COLLATE = UTF8_UNICODE_CI;
 
 --
--- Indexes for dumped tables
+-- TABLE `users`
 --
 
---
--- Indexes for table `roulette_winners`
---
-ALTER TABLE `roulette_winners`
-  ADD PRIMARY KEY (`id`);
+CREATE TABLE IF NOT EXISTS `users` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(200) NOT NULL,
+    `participate_in_roulette` INT(11) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP (),
+     PRIMARY KEY (`id`)
+)  ENGINE=INNODB DEFAULT CHARSET=UTF8 COLLATE = UTF8_UNICODE_CI;
 
 --
--- Indexes for table `users`
---
-ALTER TABLE `admins`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
+-- TABLE `admins`
 --
 
---
--- AUTO_INCREMENT for table `roulette_winners`
---
-ALTER TABLE `roulette_winners`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `admins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+CREATE TABLE IF NOT EXISTS `admins` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(200) NOT NULL,
+    `password` VARCHAR(300) NOT NULL,
+    `participate_in_roulette` TINYINT(1) NOT NULL,
+    `isAdmin` TINYINT(1) NOT NULL DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP (),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB DEFAULT CHARSET=UTF8 COLLATE = UTF8_UNICODE_CI;
 
 --
 -- Table structure for table `settings`
 --
 
-CREATE TABLE `settings` (
+CREATE TABLE IF NOT EXISTS `settings` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `setting_key` VARCHAR(255) NOT NULL,
-    `setting_value` VARCHAR(255) NOT NULL,
+    `setting_key` VARCHAR(255) NOT NULL DEFAULT 'admin_registered',
+    `setting_value` VARCHAR(255) NOT NULL DEFAULT 'no',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Insert initial setting for admin registration
+-- Update initial setting for admin registration
+SET SQL_SAFE_UPDATES = 0;
 INSERT INTO settings (setting_key, setting_value) VALUES ('admin_registered', 'no');
+UPDATE settings SET setting_value = 'no' WHERE setting_key = 'admin_registered';
 
 --
--- Table structure for table `current_roulette`
+-- TABLE `current_roulette`
 --
 
-CREATE TABLE `current_roulette` (
+CREATE TABLE IF NOT EXISTS `current_roulette` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user1` int(11) NOT NULL,
   `user2` int(11) NOT NULL,
@@ -119,11 +89,6 @@ CREATE TABLE `current_roulette` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Reset AUTO_INCREMENT for users table
-ALTER TABLE users AUTO_INCREMENT = 1;
-
--- Update initial setting for admin registration
-UPDATE settings SET setting_value = 'no' WHERE setting_key = 'admin_registered';
 
 -- Select statements to verify data (for manual checks)
 SELECT * FROM users;
@@ -139,7 +104,6 @@ TRUNCATE TABLE roulette_winners;
 TRUNCATE TABLE settings;
 TRUNCATE TABLE current_roulette;
 
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
