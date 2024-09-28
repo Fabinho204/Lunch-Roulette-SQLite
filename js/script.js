@@ -59,3 +59,40 @@ function startRoulette() {
     }
   });
 }
+
+
+function resetAllTables() {
+    Swal.fire({
+        title: "Bist du sicher?",
+        text: "Möchtest du ALLE Tabellen zurücksetzen?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#009999",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ja, zurücksetzen!",
+        cancelButtonText: "Abbrechen",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../admin_functionality/drop_tables.php",
+                method: "POST",
+                success: function (response) {
+                    Swal.fire(
+                        "Zurückgesetzt!",
+                        "Alle Tabellen wurden erfolgreich zurückgesetzt.",
+                        "success"
+                    ).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire(
+                        "Fehler!",
+                        "Es ist ein Fehler aufgetreten: " + error,
+                        "error"
+                    );
+                },
+            });
+        }
+    });
+}

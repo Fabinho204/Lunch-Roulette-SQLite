@@ -1,16 +1,14 @@
 <!-- delete_user.php -->
 <?php
-require_once('../database/db.php');
-
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUser'])) {
     $userId = $_POST['deleteUser'];
 
     if (is_numeric($userId)) {
-        $stmt = $db->prepare("DELETE FROM users WHERE id = :id");
-        $stmt->bindValue(':id', $userId, SQLITE3_INTEGER);
-        $result = $stmt->execute();
+        $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
 
-        if ($result && $db->changes() > 0) {
+        if ($stmt->affected_rows > 0) {
             $_SESSION['message'] = "User deleted successfully.";
         } else {
             $_SESSION['error'] = "Error deleting user.";
