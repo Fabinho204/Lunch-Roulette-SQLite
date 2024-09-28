@@ -1,13 +1,8 @@
 <?php
+// Verbindung zur SQLite-Datenbank herstellen
+$db = new SQLite3(__DIR__ . '/lunch_roulette.db');
 
-$servername = "localhost"; 
-$username = "root";
-$password = "";
-$dbname = "siemens_lunch_roulette";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$db) {
+    die("Verbindung zur SQLite-Datenbank fehlgeschlagen.");
 }
 ?>

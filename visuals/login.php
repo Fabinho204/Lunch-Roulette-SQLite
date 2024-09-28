@@ -1,47 +1,43 @@
 <?php
 session_start();
 
-require_once('../database/db.php');
+require_once('../database/db.php'); // SQLite Verbindung
 require_once('../navbar/nav.php');
-$errors = []; // Error Array initialisieren
+$errors = []; // Fehler-Array initialisieren
 
-$admin_check = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'admin_registered'");
-$admin_registered = $admin_check->fetch_assoc()['setting_value'];
+// Überprüfen, ob der Admin registriert ist
+$admin_check = $db->query("SELECT setting_value FROM settings WHERE setting_key = 'admin_registered'");
+$admin_registered = $admin_check->fetchArray(SQLITE3_ASSOC)['setting_value'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
-    // Retrieve form data
+    // Formular-Daten abrufen
     $username = trim($_POST["name"]);
     $password = $_POST["password"];
 
-    // Check any input field empty
+    // Überprüfen, ob irgendein Eingabefeld leer ist
     if (empty($username) || empty($password)) {
         $errors[] = "Name und Passwort sind erforderlich.";
     } else {
-        // Check if admin exists in the database
-        $stmt = $conn->prepare("SELECT id, `name`, `password`, isAdmin FROM admins WHERE `name` = ?");
-        $stmt->bind_param("s", $username); // Bind parameters
-        $stmt->execute();
-        $result = $stmt->get_result();
+        // Überprüfen, ob der Admin in der Datenbank existiert
+        $stmt = $db->prepare("SELECT id, name, password, isAdmin FROM admins WHERE name = :name");
+        $stmt->bindValue(':name', $username, SQLITE3_TEXT);
+        $result = $stmt->execute();
         
-        if ($result->num_rows == 1) {
-            // Admin exists, verify password
-            $row = $result->fetch_assoc();
-
-            // password_verify($password, $row['password']) später den Hash verwenden für Sicherheit
-
+        if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            // Admin existiert, Passwort verifizieren
             if ($row['isAdmin']) {
                 if (password_verify($password, $row['password'])) {
-                    // Password is correct, log in.
-                    $_SESSION['adminlogin']=true;
+                    // Passwort ist korrekt, Admin einloggen
+                    $_SESSION['adminlogin'] = true;
                     $_SESSION['admin_id'] = $row['id'];
                     $_SESSION['admin_name'] = $row['name'];
                     $_SESSION['is_admin'] = $row['isAdmin'];
-                    header("Location: index.php"); // Redirect
+                    header("Location: index.php"); // Weiterleitung
                     exit();
                 } else {
-                    $errors[] = "Falsches passwort.";
+                    $errors[] = "Falsches Passwort.";
                 }
-            } else{
+            } else {
                 $errors[] = "Keine Administratorrechte!";
             }
         } else {
@@ -52,8 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
     }
 }
 
-// Close connection
-$conn->close();
+// Verbindung schließen
+$db->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,19 +58,15 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log-In</title>
-    
-    <!-- Font Awesome -->
+    <!-- Bootstrap und Font-Awesome -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
-     <!-- Local Style and Script -->
+    <!-- Lokale Styles und Skripte -->
     <link rel="stylesheet" href="../css/nav.css">
     <script src="../js/script.js"></script>
 
-    <!-- Schriftart Font -->
+    <!-- Schriftart -->
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
@@ -94,7 +86,7 @@ $conn->close();
             </div>
         </form>
         <?php
-            // Display errors from $errors[] array
+            // Fehler aus dem $errors[]-Array anzeigen
             if (!empty($errors)) {
                 echo '<div class="alert alert-danger">';
                 foreach ($errors as $error) {

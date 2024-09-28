@@ -19,7 +19,20 @@ $sql = "SELECT
         ORDER BY 
             cr.id DESC"; /*rw. oder cr.*/
 
-$result = $conn->query($sql); // execute the query
+
+$result = $db->query($sql); // execute the query
+
+if (!$result) {
+    echo "Fehler bei der Abfrage: " . $db->lastErrorMsg();
+    exit;
+}
+
+// Check any results
+$hasResults = false;
+while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+    $hasResults = true;
+    break; // We only need to know if theres at least one result
+}
 ?>
 
 <!DOCTYPE html>
@@ -27,21 +40,13 @@ $result = $conn->query($sql); // execute the query
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/nav.css">
     <title>Essens-Paare</title>
-
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
-     <!-- Local Style and Script -->
-    <link rel="stylesheet" href="../css/nav.css">
-    <script src="../js/script.js"></script>
-
-    <!-- Schriftart Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
@@ -49,9 +54,11 @@ $result = $conn->query($sql); // execute the query
         <div class="container main">
             <div class="row">
                 <?php
-                if ($result->num_rows > 0) { //check if there is at least one row returned by the query
+                if ($hasResults) { // If there is at least one result
                     $count = 1;
-                    while ($row = $result->fetch_assoc()) { // fetch every row from reesult
+                    // Reset the result set to start fetching rows from the beginning
+                    $result = $db->query($sql);
+                    while ($row = $result->fetchArray(SQLITE3_ASSOC)) { // fetch every row from reesult
                         echo '<div class="col-lg-4 col-md-6 mb-4">';
                         echo '<div class="card">';
                         echo '<div class="card-body">';
@@ -85,5 +92,5 @@ $result = $conn->query($sql); // execute the query
 </html>
 
 <?php
-$conn->close();
+$db->close();
 ?>

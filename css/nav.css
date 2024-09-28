@@ -118,25 +118,30 @@ h6 {
   margin: 15px 15px 15px 15px;
 }
 
+.btn-signup::before,
+.btn-login::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.5s ease;
+  z-index: 1;
+}
+
+.btn-signup:hover::before,
+.btn-login:hover::before {
+  left: 0;
+}
+
 .btn-signup:hover,
 .btn-login:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
   background-color: #66b3ff;
 }
-
-/* Extend base styles for the reset button with different background color */
-.btn-reset {
-  background-color: #ff7300; /* New color for the reset button (Tomato) */
-  color: #fff; /* Keep the text color white */
-}
-
-.btn-reset:hover,
-.btn-reset:focus {
-  background-color: #dd0202; /* Darker shade of the reset button on hover */
-}
-
-
 
 .signup-container,
 .login-container {
