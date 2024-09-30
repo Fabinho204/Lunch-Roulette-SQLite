@@ -3,18 +3,24 @@
 $servername = "localhost";
 $username = "root"; // Update with your DB username
 $password = ""; // Update with your DB password
-$dbname = "siemens_lunch_roulette";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password);
 
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Step 2: Create Tables
-// Wrap everything in a transaction for safety
+$createDatabase = "CREATE DATABASE IF NOT EXISTS siemens_lunch_roulette CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+if ($conn->query($createDatabase) === TRUE) {
+    echo "Database created or already exists.<br>";
+} else {
+    die("Error creating database: " . $conn->error);
+}
+
+$conn->select_db('siemens_lunch_roulette');
+
 $conn->begin_transaction();
 
 try {
